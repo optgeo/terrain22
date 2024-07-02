@@ -13,3 +13,6 @@ default:
 	ruby filter.rb | head -n 20000 | \
 	tippecanoe --minimum-zoom $(MINZOOM) --maximum-zoom $(MAXZOOM) -f -o $(DST_DIR)/$(N).pmtiles
 
+upload:
+	aws s3 cp $(DST_DIR)/*.pmtiles s3://us-west-2.opendata.source.coop/smartmaps/foil4gr1/
+

@@ -2,7 +2,7 @@
 PMTiles of Terrain22
 
 # Demo
-TBD
+https://pmtiles.io/?url=https%3A%2F%2Fdata.source.coop%2Fsmartmaps%2Ffoil4gr1%2F44.pmtiles#map=8.26/1.793/103.579
 
 # Technical information
 FIXME
