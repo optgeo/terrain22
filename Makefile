@@ -22,11 +22,10 @@ geojsons:
 	ruby filter.rb | bzip2 -9c > $(SRC_DIR)/$(N).geojsons.bz2
 
 pmtiles:
-	ls $(SRC_DIR)/*.bz2 | xargs -n 1 sh -c 'bzcat "$$0" || true' | tippecanoe-json-tool |\
+	ls $(SRC_DIR)/*.bz2 | egrep -v "src/(12|13|15|46|66|67)\.geojsons.bz2" | xargs -n 1 sh -c 'bzcat "$$0" || true' | tippecanoe-json-tool |\
 	tippecanoe --layer $(LAYER) --minimum-zoom $(MINZOOM) \
 	--maximum-zoom $(MAXZOOM) -f -o $(DST_DIR)/terrain22.pmtiles
 
-
 upload:
-	aws s3 cp $(DST_DIR)/*.pmtiles s3://us-west-2.opendata.source.coop/smartmaps/foil4gr1/
+	aws s3 cp $(DST_DIR)/terrain22.pmtiles s3://us-west-2.opendata.source.coop/smartmaps/foil4gr1/
 

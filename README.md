@@ -2,7 +2,11 @@
 PMTiles of Terrain22
 
 # Demo
-https://pmtiles.io/?url=https%3A%2F%2Fdata.source.coop%2Fsmartmaps%2Ffoil4gr1%2F44.pmtiles#map=8.26/1.793/103.579
+## Observable
+https://observablehq.com/d/e66dd18a3be303c7
+
+## PMTiles Viewer
+https://pmtiles.io/?url=https%3A%2F%2Fdata.source.coop%2Fsmartmaps%2Ffoil4gr1%2FTerrain22.pmtiles#map=8.26/1.793/103.579
 
 # Technical information
 FIXME
