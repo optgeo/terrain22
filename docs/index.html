@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StyleHub</title>
+<link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
+<style>
+  body { margin: 0; padding: 0; }
+  #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+<script type="module">
+import { Protocol } from 'https://cdn.skypack.dev/pmtiles'
+maplibregl.addProtocol('pmtiles', (new Protocol()).tile)
+
+document.addEventListener('DOMContentLoaded', function () {
+  const urlParams = new URLSearchParams(window.location.search)
+  const styleUrl = urlParams.get('style') || 'https://optgeo.github.io/terrain22/style.json'
+
+  const map = new maplibregl.Map({
+    container: 'map', style: styleUrl,
+    hash: true, maxPitch: 85
+  })
+  map.addControl(new maplibregl.FullscreenControl())
+  map.addControl(new maplibregl.NavigationControl())
+  map.addControl(new maplibregl.ScaleControl({ "unit": "metric" }))
+  map.addControl(new maplibregl.GeolocateControl())
+
+  const info = document.createElement("div")
+  info.id = "info"
+  info.style.position = "absolute"
+  info.style.bottom = "40px"
+  info.style.left = "10px"
+  info.style.padding = "5px 10px"
+  info.style.background = "rgba(255, 255, 255, 0.8)"
+  info.style.border = "1px solid #ccc"
+  info.style.borderRadius = "3px"
+  info.style.fontFamily = "'Operator Mono', 'Menlo', 'Monaco', 'Consolas', monospace"
+  info.style.fontSize = "14px"
+  info.innerHTML = "Hover over a polygon"
+  container.appendChild(info)
+  
+  map.on('load', () => {
+    map.on("mousemove", "terrain22", e => {
+      info.innerHTML = {
+        1: "Mountain summit　山頂",
+        2: "Cliff slope　崖の斜面",
+        3: "Lower/hilly mountain　低い山/丘陵",
+        4: "Steep hills/dissected cliff slope　急な丘/開析された崖の斜面",
+        5: "Large highland slope (steep)　高地の長大斜面（急）",
+        6: "Large highland slope (moderate)　高地の長大斜面（緩やか）",
+        7: "Mountain valley slope 山地の谷斜面",
+        8: "Moderate hills 緩やかな丘",
+        9: "Terrace/fan/plateau (high, dissected, Sinks < 50%) 段丘/扇状地/台地（高い、開析された、窪地 < 50%）",
+        10: "Terrace/fan/plateau (high, dissected, Sinks >= 50%) 段丘/扇状地/台地（高い、開析された、窪地 >= 50%）",
+        11: "Terrace/fan/plateau (high, surface, Sinks < 50%) 段丘/扇状地/台地（高い、表面、窪地 < 50%）",
+        12: "Terrace/fan/plateau (high, surface, Sinks >= 50%) 段丘/扇状地/台地（高い、表面、窪地 >= 50%）",
+        13: "Valley slope (Sinks < 50%) 谷の斜面（窪地 < 50%）",
+        14: "Valley slope (Sinks >= 50%) 谷の斜面（窪地 >= 50%）",
+        15: "Terrace/fan/plateau (low, dissected, Sinks < 50%) 段丘/扇状地/台地（低い、開析された、窪地 < 50%）",
+        16: "Terrace/fan/plateau (low, dissected, Sinks >= 50%) 段丘/扇状地/台地（低い、開析された、窪地 >= 50%）",
+        17: "Terrace/fan/plateau (low, surface, Sinks < 50%) 段丘/扇状地/台地（低い、表面、窪地 < 50%）",
+        18: "Terrace/fan/plateau (low, surface, Sinks >= 50%) 段丘/扇状地/台地（低い、表面、窪地 >= 50%）",
+        19: "High plain (Sinks < 50%) 高い平地（窪地 < 50%）",
+        20: "High plain (Sinks >= 50%) 高い平地（窪地 >= 50%）",
+        21: "Low plain (Sinks < 50%) 低い平地（窪地 < 50%）",
+        22: "Low plain (Sinks >= 50%) 低い平地（窪地 >= 50%）"
+      }[e.features[0].properties.terrain22]
+    })
+    map.on("mouseleave", "terrain22", () => {
+      info.innerHTML = "Hover over a polygon"
+    })
+  })
+})
+</script>
+</body>
+</html>
