@@ -7,11 +7,11 @@
 <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
 <style>
   body { margin: 0; padding: 0; }
-  #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+  #container { position: absolute; top: 0; bottom: 0; width: 100%; }
 </style>
 </head>
 <body>
-<div id="map"></div>
+<div id="container"></div>
 <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
 <script type="module">
 import { Protocol } from 'https://cdn.skypack.dev/pmtiles'
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const styleUrl = urlParams.get('style') || 'https://optgeo.github.io/terrain22/style.json'
 
   const map = new maplibregl.Map({
-    container: 'map', style: styleUrl,
+    container: 'container', style: styleUrl,
     hash: true, maxPitch: 85
   })
   map.addControl(new maplibregl.FullscreenControl())
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
   info.style.fontFamily = "'Operator Mono', 'Menlo', 'Monaco', 'Consolas', monospace"
   info.style.fontSize = "14px"
   info.innerHTML = "Hover over a polygon"
-  container.appendChild(info)
+  document.getElementById('container').appendChild(info)
   
   map.on('load', () => {
     map.on("mousemove", "terrain22", e => {
