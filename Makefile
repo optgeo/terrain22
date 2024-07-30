@@ -3,7 +3,7 @@ DST_DIR = dst
 MINZOOM = 9 
 MAXZOOM = 13
 LAYER = terrain22
-#N = 44
+#N = 44 # Give as environment variable
 SHP_PATH = $(SRC_DIR)/Poly_$(N)/Poly_$(N).shp
 DBF_PATH = $(SRC_DIR)/Poly_$(N)/GlobalCluster_$(N).dbf
 
@@ -22,7 +22,7 @@ geojsons:
 	ruby filter.rb | bzip2 -9c > $(SRC_DIR)/$(N).geojsons.bz2
 
 pmtiles:
-	ls $(SRC_DIR)/*.bz2 | egrep -v "src/(15)\.geojsons.bz2" | xargs -n 1 sh -c 'bzcat "$$0" || true' | tippecanoe-json-tool |\
+	ls $(SRC_DIR)/*.bz2 | egrep -v "src/(28|29|34|62|77|78|81|82)\.geojsons.bz2" | xargs -n 1 sh -c 'bzcat "$$0" || true' | tippecanoe-json-tool |\
 	tippecanoe --layer $(LAYER) --minimum-zoom $(MINZOOM) \
 	--maximum-zoom $(MAXZOOM) -f -o $(DST_DIR)/terrain22.pmtiles
 

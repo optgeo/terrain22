@@ -13,9 +13,16 @@
 <body>
 <div id="container"></div>
 <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/maplibre-contour/dist/index.min.js"></script>
 <script type="module">
 import { Protocol } from 'https://cdn.skypack.dev/pmtiles'
 maplibregl.addProtocol('pmtiles', (new Protocol()).tile)
+
+const demSource = new mlcontour.DemSource({
+  url: "https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png",
+  maxzoom: 12
+})
+demSource.setupMaplibre(maplibregl)
 
 document.addEventListener('DOMContentLoaded', function () {
   const urlParams = new URLSearchParams(window.location.search)
@@ -45,6 +52,56 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('container').appendChild(info)
   
   map.on('load', () => {
+    map.addSource("contour-source", {
+      type: "vector",
+      tiles: [
+        demSource.contourProtocolUrl({
+          thresholds: {
+            8: [500, 2000],
+            9: [500, 2000],
+            10: [200, 1000],
+            11: [100, 500],
+            12: [50, 200],
+            13: [20, 100],
+            14: [10, 50]
+          },
+          contourLayer: "contours",
+          elevationKey: "ele",
+          levelKey: "level",
+          extent: 4096,
+          buffer: 1,
+        }),
+      ],
+      maxzoom: 15,
+    })
+    map.addLayer({
+      id: "contour-lines",
+      type: "line",
+      source: "contour-source",
+      "source-layer": "contours",
+      filter: [">", ["get", "ele"], 0],
+      paint: {
+        "line-color": "rgba(0,0,0, 50%)",
+        "line-width": ["match", ["get", "level"], 1, 1, 0.5],
+      }
+    }, "building")
+    map.addLayer({
+      id: "contour-labels",
+      type: "symbol",
+      source: "contour-source",
+      "source-layer": "contours",
+      filter: [">", ["get", "ele"], 0],
+      layout: {
+        "symbol-placement": "line",
+        "text-size": 10,
+        "text-field": ["concat", ["number-format", ["get", "ele"], {}], "m"],
+        "text-font": ["NotoSansJP-Regular"],
+      },
+      paint: {
+        "text-halo-color": "white",
+        "text-halo-width": 1,
+      }
+    }, "building")
     map.on("mousemove", "terrain22", e => {
       info.innerHTML = {
         1: "Mountain summit　山頂",
