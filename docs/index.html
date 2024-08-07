@@ -26,10 +26,9 @@ demSource.setupMaplibre(maplibregl)
 
 document.addEventListener('DOMContentLoaded', function () {
   const urlParams = new URLSearchParams(window.location.search)
-  const styleUrl = urlParams.get('style') || 'https://optgeo.github.io/terrain22/style.json'
 
   const map = new maplibregl.Map({
-    container: 'container', style: styleUrl,
+    container: 'container', style: 'style.json',
     hash: true, maxPitch: 85
   })
   map.addControl(new maplibregl.FullscreenControl())
@@ -51,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
   info.innerHTML = "Hover over a polygon"
   document.getElementById('container').appendChild(info)
   
-  map.on('load', () => {
+  map.once('movestart', () => {
     map.addSource("contour-source", {
       type: "vector",
       tiles: [
