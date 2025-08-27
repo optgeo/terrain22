@@ -2,6 +2,11 @@
 PMTiles of Terrain22
 
 # Demo
+## GitHub Pages
+https://optgeo.github.io/terrain22
+
+This uses terrain22.pmtiles hosted on x-24b.
+
 ## Observable
 https://observablehq.com/d/e66dd18a3be303c7
 

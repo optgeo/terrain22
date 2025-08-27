@@ -4,19 +4,14 @@
     "terrain22": {
       "type": "vector",
       "url": "https://tunnel.optgeo.org/martin/terrain22",
-      "attribution": "<a href='https://gisstar.gsi.go.jp/terrain2021/'>Terrain22</a>"
+      "attribution": "<a href='https://gisstar.gsi.go.jp/terrain2021/'>Terrain22</a>",
+      "minzoom": 9,
+      "maxzoom": 13
     }
   },
   "sprite": "https://openmaptiles.github.io/positron-gl-style/sprite",
   "glyphs": "https://gsi-cyberjapan.github.io/optimal_bvmap/glyphs/{fontstack}/{range}.pbf",
   "layers": [
-    {
-      "id": "background",
-      "type": "background",
-      "paint": {
-        "background-color": "rgb(242,243,240)"
-      }
-    },
     {
       "id": "terrain22",
       "type": "fill",
@@ -74,23 +69,6 @@
           22,
           "rgb(0, 183, 255)",
           "rgb(100, 100, 100)"
-        ],
-        "fill-opacity": [
-          "interpolate",
-          [
-            "linear"
-          ],
-          [
-            "zoom"
-          ],
-          9,
-          0.5,
-          10,
-          0.3,
-          13,
-          0.1,
-          15,
-          0
         ]
       },
       "maxzoom": 22
