@@ -362,7 +362,7 @@
       "paint": {
         "fill-antialias": true,
         "fill-color": "#D2B48C",
-        "fill-outline-color": "rgb(219, 219, 218)"
+        "fill-outline-color": "#BEA078"
       },
       "layout": {},
       "minzoom": 12,
