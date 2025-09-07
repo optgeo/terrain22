@@ -361,8 +361,8 @@
       "source-layer": "building",
       "paint": {
         "fill-antialias": true,
-        "fill-color": "rgb(234, 234, 229)",
-        "fill-outline-color": "rgb(219, 219, 218)"
+        "fill-color": "#D2B48C",
+        "fill-outline-color": "#BEA078"
       },
       "layout": {},
       "minzoom": 12,
