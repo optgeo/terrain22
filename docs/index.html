@@ -8,10 +8,232 @@
 <style>
   body { margin: 0; padding: 0; }
   #container { position: absolute; top: 0; bottom: 0; width: 100%; }
+  
+  /* Legend Panel Styles */
+  #legend-panel {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    font-family: 'Operator Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+    font-size: 12px;
+    max-width: 350px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+  }
+  
+  #legend-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+  }
+  
+  #legend-title {
+    font-weight: bold;
+    margin: 0;
+    font-size: 14px;
+  }
+  
+  #legend-controls {
+    display: flex;
+    gap: 5px;
+  }
+  
+  #lang-toggle, #collapse-toggle {
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background-color 0.2s;
+  }
+  
+  #lang-toggle:hover, #collapse-toggle:hover {
+    background: #e0e0e0;
+  }
+  
+  #legend-content {
+    max-height: 300px;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+  }
+  
+  #legend-content.collapsed {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    padding: 2px 0;
+  }
+  
+  .legend-color {
+    width: 20px;
+    height: 15px;
+    border: 1px solid #666;
+    margin-right: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  
+  .legend-description {
+    flex: 1;
+    line-height: 1.3;
+  }
+  
+  .terrain-number {
+    font-weight: bold;
+    color: #666;
+    margin-right: 5px;
+    min-width: 20px;
+  }
 </style>
 </head>
 <body>
 <div id="container"></div>
+
+<!-- Legend Panel -->
+<div id="legend-panel">
+  <div id="legend-header">
+    <h3 id="legend-title">Terrain22 Legend</h3>
+    <div id="legend-controls">
+      <button id="lang-toggle">EN</button>
+      <button id="collapse-toggle">−</button>
+    </div>
+  </div>
+  <div id="legend-content">
+    <!-- Legend items will be populated by JavaScript -->
+  </div>
+</div>
+<script>
+// Terrain22 Legend Data
+const terrainData = {
+  colors: {
+    1: "rgb(112, 79, 41)",
+    2: "rgb(172, 82, 50)",
+    3: "rgb(153, 131, 83)",
+    4: "rgb(251, 154, 153)",
+    5: "rgb(248, 3, 204)",
+    6: "rgb(243, 162, 243)",
+    7: "rgb(145, 150, 185)",
+    8: "rgb(40, 135, 108)",
+    9: "rgb(20, 172, 132)",
+    10: "rgb(31, 195, 105)",
+    11: "rgb(223, 134, 31)",
+    12: "rgb(30, 218, 74)",
+    13: "rgb(125, 162, 143)",
+    14: "rgb(155, 151, 169)",
+    15: "rgb(251, 147, 0)",
+    16: "rgb(122, 236, 50)",
+    17: "rgb(249, 180, 4)",
+    18: "rgb(194, 251, 71)",
+    19: "rgb(251, 216, 15)",
+    20: "rgb(154, 255, 255)",
+    21: "rgb(253, 253, 120)",
+    22: "rgb(0, 183, 255)"
+  },
+  descriptions: {
+    1: { en: "Mountain summit", ja: "山頂" },
+    2: { en: "Cliff slope", ja: "崖の斜面" },
+    3: { en: "Lower/hilly mountain", ja: "低い山/丘陵" },
+    4: { en: "Steep hills/dissected cliff slope", ja: "急な丘/開析された崖の斜面" },
+    5: { en: "Large highland slope (steep)", ja: "高地の長大斜面（急）" },
+    6: { en: "Large highland slope (moderate)", ja: "高地の長大斜面（緩やか）" },
+    7: { en: "Mountain valley slope", ja: "山地の谷斜面" },
+    8: { en: "Moderate hills", ja: "緩やかな丘" },
+    9: { en: "Terrace/fan/plateau (high, dissected, Sinks < 50%)", ja: "段丘/扇状地/台地（高い、開析された、窪地 < 50%）" },
+    10: { en: "Terrace/fan/plateau (high, dissected, Sinks >= 50%)", ja: "段丘/扇状地/台地（高い、開析された、窪地 >= 50%）" },
+    11: { en: "Terrace/fan/plateau (high, surface, Sinks < 50%)", ja: "段丘/扇状地/台地（高い、表面、窪地 < 50%）" },
+    12: { en: "Terrace/fan/plateau (high, surface, Sinks >= 50%)", ja: "段丘/扇状地/台地（高い、表面、窪地 >= 50%）" },
+    13: { en: "Valley slope (Sinks < 50%)", ja: "谷の斜面（窪地 < 50%）" },
+    14: { en: "Valley slope (Sinks >= 50%)", ja: "谷の斜面（窪地 >= 50%）" },
+    15: { en: "Terrace/fan/plateau (low, dissected, Sinks < 50%)", ja: "段丘/扇状地/台地（低い、開析された、窪地 < 50%）" },
+    16: { en: "Terrace/fan/plateau (low, dissected, Sinks >= 50%)", ja: "段丘/扇状地/台地（低い、開析された、窪地 >= 50%）" },
+    17: { en: "Terrace/fan/plateau (low, surface, Sinks < 50%)", ja: "段丘/扇状地/台地（低い、表面、窪地 < 50%）" },
+    18: { en: "Terrace/fan/plateau (low, surface, Sinks >= 50%)", ja: "段丘/扇状地/台地（低い、表面、窪地 >= 50%）" },
+    19: { en: "High plain (Sinks < 50%)", ja: "高い平地（窪地 < 50%）" },
+    20: { en: "High plain (Sinks >= 50%)", ja: "高い平地（窪地 >= 50%）" },
+    21: { en: "Low plain (Sinks < 50%)", ja: "低い平地（窪地 < 50%）" },
+    22: { en: "Low plain (Sinks >= 50%)", ja: "低い平地（窪地 >= 50%）" }
+  }
+};
+
+// Legend functionality
+let currentLanguage = 'en';
+let isCollapsed = false;
+
+function initializeLegend() {
+  const langToggle = document.getElementById('lang-toggle');
+  const collapseToggle = document.getElementById('collapse-toggle');
+  const legendContent = document.getElementById('legend-content');
+  const legendTitle = document.getElementById('legend-title');
+  
+  // Language toggle
+  langToggle.addEventListener('click', () => {
+    currentLanguage = currentLanguage === 'en' ? 'ja' : 'en';
+    langToggle.textContent = currentLanguage === 'en' ? 'EN' : 'JA';
+    legendTitle.textContent = currentLanguage === 'en' ? 'Terrain22 Legend' : 'Terrain22 凡例';
+    updateLegendContent();
+  });
+  
+  // Collapse toggle
+  collapseToggle.addEventListener('click', () => {
+    isCollapsed = !isCollapsed;
+    legendContent.classList.toggle('collapsed', isCollapsed);
+    collapseToggle.textContent = isCollapsed ? '+' : '−';
+  });
+  
+  // Initial content
+  updateLegendContent();
+}
+
+function updateLegendContent() {
+  const legendContent = document.getElementById('legend-content');
+  legendContent.innerHTML = '';
+  
+  for (let i = 1; i <= 22; i++) {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    
+    const colorSwatch = document.createElement('div');
+    colorSwatch.className = 'legend-color';
+    colorSwatch.style.backgroundColor = terrainData.colors[i];
+    
+    const description = document.createElement('div');
+    description.className = 'legend-description';
+    
+    const terrainNumber = document.createElement('span');
+    terrainNumber.className = 'terrain-number';
+    terrainNumber.textContent = i + '.';
+    
+    const text = document.createTextNode(terrainData.descriptions[i][currentLanguage]);
+    
+    description.appendChild(terrainNumber);
+    description.appendChild(text);
+    
+    item.appendChild(colorSwatch);
+    item.appendChild(description);
+    
+    legendContent.appendChild(item);
+  }
+}
+
+// Initialize legend when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeLegend);
+</script>
+
 <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/maplibre-contour/dist/index.min.js"></script>
 <script type="module">
